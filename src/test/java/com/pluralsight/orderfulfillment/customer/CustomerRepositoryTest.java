@@ -11,6 +11,7 @@ import org.junit.*;
 import com.pluralsight.orderfulfillment.order.OrderEntity;
 import com.pluralsight.orderfulfillment.test.*;
 
+@Ignore
 public class CustomerRepositoryTest extends BaseJpaRepositoryTest {
 
    @Inject

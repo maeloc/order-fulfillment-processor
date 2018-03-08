@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +25,7 @@ public class NewWebSiteOrderRouteTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		// Insert catalog and customer data
+		// Insert catalog and customer data on derby test database
 		jdbcTemplate
 		.execute("insert into orders.catalogitem (id, itemnumber, itemname, itemtype) "
 				+ "values (1, '078-1344200444', 'Build Your Own JavaScript Framework in Just 24 Hours', 'Book')");

@@ -16,13 +16,13 @@
   <logger name="org.apache"><level value="info" /></logger>
   <logger name="org.springframework"><level value="info" /></logger>
   <logger name="org.springframework.web"><level value="debug" /></logger>
-  <logger name="org.hibernate"><level value="info" /></logger>
-  <logger name="org.hibernate.SQL"><level value="debug" /></logger>
-  <logger name="org.hibernate.type.descriptor.sql"><level value="trace" /></logger>
+<!--   <logger name="org.hibernate"><level value="info" /></logger> -->
+<!--   <logger name="org.hibernate.SQL"><level value="debug" /></logger> -->
+<!--   <logger name="org.hibernate.type.descriptor.sql"><level value="trace" /></logger> -->
   
 
   <root>
-    <level value="debug" />
+    <level value="info" />
     <appender-ref ref="LOGFILE" />
   </root>
 

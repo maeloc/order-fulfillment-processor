@@ -11,6 +11,7 @@ import org.springframework.data.domain.*;
 
 import com.pluralsight.orderfulfillment.test.*;
 
+@Ignore
 public class OrderRepositoryTest extends BaseJpaRepositoryTest {
 
    @Inject

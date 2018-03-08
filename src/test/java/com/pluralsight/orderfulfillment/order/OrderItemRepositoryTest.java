@@ -10,6 +10,7 @@ import org.junit.*;
 
 import com.pluralsight.orderfulfillment.test.*;
 
+@Ignore
 public class OrderItemRepositoryTest extends BaseJpaRepositoryTest {
 
    @Inject

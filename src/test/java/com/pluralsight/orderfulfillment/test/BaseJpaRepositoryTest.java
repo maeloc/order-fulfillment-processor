@@ -20,7 +20,6 @@ import com.pluralsight.orderfulfillment.config.*;
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class,
       DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @Transactional
-@Ignore
 public class BaseJpaRepositoryTest {
 
    @PersistenceContext

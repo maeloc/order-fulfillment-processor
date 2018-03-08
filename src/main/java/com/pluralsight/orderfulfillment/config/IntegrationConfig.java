@@ -39,7 +39,7 @@ public class IntegrationConfig extends CamelConfiguration {
 		return new ActiveMQConnectionFactory(environment.getProperty("activemq.broker.url"));
 	}
 	
-	@Bean(initMethod="start", destroyMethod="stop")
+	@Bean(initMethod = "start", destroyMethod = "stop")
 	public PooledConnectionFactory pooledConnectionFactory() {
 		PooledConnectionFactory factory = new PooledConnectionFactory();
 		factory.setConnectionFactory(jmsConnectionFactory());
@@ -74,6 +74,34 @@ public class IntegrationConfig extends CamelConfiguration {
 		return sqlComponent;
 	}
 	
+	   /**
+	    * Camel RouteBuilder for routing orders from the orders database. Routes any
+	    * orders with status set to new, then updates the order status to be in
+	    * process. The route sends the message exchange to a log component.
+	    * 
+	    * @return
+	    */
+//	   @Bean
+//	   public org.apache.camel.builder.RouteBuilder newWebsiteOrderRoute() {
+//	      return new org.apache.camel.builder.RouteBuilder() {
+//
+//	         @Override
+//	         public void configure() throws Exception {
+//	            // Send from the SQL component to the Log component.
+//	            from(
+//	                  "sql:"
+//	                        + "select id from orders.\"order\" where status = '"
+//	                        + OrderStatus.NEW.getCode()
+//	                        + "'"
+//	                        + "?"
+//	                        + "consumer.onConsume=update orders.\"order\" set status = '"
+//	                        + OrderStatus.PROCESSING.getCode()
+//	                        + "' where id = :#id").to(
+//	                  "log:com.pluralsight.orderfulfillment.order?level=INFO");
+//	         }
+//	      };
+//	   }	
+	
 	/**
 	 * Camel RouteBuilder for routing orders from the orders database. Routes any
 	 * orders with status set to new, then updates the order status to be in
@@ -93,6 +121,7 @@ public class IntegrationConfig extends CamelConfiguration {
 						+ OrderStatus.PROCESSING.getCode() + "'"
 						+ " where id = :#id")
 				.beanRef("orderItemMessageTranslator", "transformToOrderItemMessage")
+				.to("log:com.pluralsight.orderfulfillment.order?level=INFO")
 				.to("activemq:queue:ORDER_ITEM_PROCESSING");
 			}
 		};
@@ -128,6 +157,8 @@ public class IntegrationConfig extends CamelConfiguration {
 			public void configure() throws Exception {
 				Namespaces namespace = new Namespaces("o", "http://www.pluralsight.com/orderfulfillment/Order");
 				
+				// Send from the ORDER_ITEM_PROCESSING queue to the correct
+				// fulfillment center queue
 				from("activemq:queue:ORDER_ITEM_PROCESSING")
 				.choice()
 					.when()
@@ -144,7 +175,32 @@ public class IntegrationConfig extends CamelConfiguration {
 		};
 	}
 	
-	
-		
+
+	/**
+	 * Route builder to implement production to a RESTful web service. This route
+	 * will first consume a message from the FC1_FULFILLMENT_REQUEST ActiveMQ
+	 * queue. The message body will be an order in XML format. The message will
+	 * then be passed to the fulfillment center one processor where it will be
+	 * transformed from the XML to JSON format. Next, the message header content
+	 * type will be set as JSON format and a message will be posted to the
+	 * fulfillment center one RESTful web service. If the response is success,
+	 * the route will be complete. If not, the route will error out.
+	 * 
+	 * @return
+	 */
+	@Bean
+	public org.apache.camel.builder.RouteBuilder fulfillmentCenterOneRouter() {
+		return new org.apache.camel.builder.RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				from("activemq:queue:FC1_FULFILLMENT_REQUEST")
+				.beanRef("fulfillmentCenterOneProcessor",
+						"transformToOrderRequestMessage")
+				.setHeader(org.apache.camel.Exchange.CONTENT_TYPE,
+						constant("application/json"))
+				.to("http4://localhost:8090/services/orderFulfillment/processOrders");
+			}
+		};
+	}	
 	
 }

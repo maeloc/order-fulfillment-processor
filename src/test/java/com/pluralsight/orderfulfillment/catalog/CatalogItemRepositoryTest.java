@@ -9,11 +9,13 @@ import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.pluralsight.orderfulfillment.order.OrderItemEntity;
 import com.pluralsight.orderfulfillment.test.BaseJpaRepositoryTest;
 
+@Ignore
 public class CatalogItemRepositoryTest extends BaseJpaRepositoryTest {
 
    @Inject
